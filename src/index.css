@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+* {
+  font-family:
+    "Poppins",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
 @keyframes blob {
   0%,
   100% {
