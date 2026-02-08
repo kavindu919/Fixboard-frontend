@@ -7,6 +7,7 @@ import { userRegistration } from "../../services/auth.services";
 import { registerSchema } from "../../utils/validation/authSchema";
 import { ZodError } from "zod";
 import toast from "react-hot-toast";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -15,6 +16,7 @@ const RegisterPage = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -28,24 +30,35 @@ const RegisterPage = () => {
       setLoading(true);
       const validData = registerSchema.parse(data);
       const res = await userRegistration(validData);
-      if (res?.data.success) {
-        toast.success(res?.message);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setData({
+          name: "",
+          email: "",
+          password: "",
+        });
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
       } else {
-        toast.error(res?.message);
+        toast.error(res.data.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ZodError) {
         toast.error(error.issues[0]?.message);
         return;
       }
-      console.log(error);
-      toast.error("Unexpected error occurred");
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message || "Registration failed");
+      } else {
+        toast.error("Unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }
   };
   return (
-    <div className="grid min-h-screen grid-cols-1  md:grid-cols-2">
+    <main className="grid min-h-screen grid-cols-1  md:grid-cols-2">
       <div className="flex w-full flex-col items-center justify-center gap-4 p-8 md:p-12 ">
         <div className="flex w-full flex-col gap-9 md:px-20 max-w-xl">
           <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
@@ -57,6 +70,7 @@ const RegisterPage = () => {
               type="text"
               text="Name"
               onChange={handleChange}
+              disabled={loading}
               required
             />
             <InputFeild
@@ -64,6 +78,7 @@ const RegisterPage = () => {
               type="email"
               text="Email"
               onChange={handleChange}
+              disabled={loading}
               required
             />
             <div className="flex flex-col items-center justify-between">
@@ -72,6 +87,7 @@ const RegisterPage = () => {
                 type="password"
                 text="Password"
                 onChange={handleChange}
+                disabled={loading}
                 required
               />
               <span className="mt-1 self-end text-xs">
@@ -87,9 +103,9 @@ const RegisterPage = () => {
                 type="submit"
               />
               <span className="mt-1 text-center">
-                Have an Account?{" "}
+                Already have an account?{" "}
                 <span className="font-bold">
-                  {/* <a href="/signup">Sign Up</a> */}
+                  <a href="/signup">Sign in</a>
                 </span>
               </span>
             </div>
@@ -226,7 +242,7 @@ const RegisterPage = () => {
 
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
       </div>
-    </div>
+    </main>
   );
 };
 
