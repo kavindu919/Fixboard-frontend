@@ -24,7 +24,7 @@ const PasswordField = ({ text, type, name, ...rest }: InputDataProps) => {
         name={name}
         type={inputType}
         {...rest}
-        className="peer w-full appearance-none rounded-md border-2 border-gray-400 bg-white p-1 focus:ring-0 focus:drop-shadow-xl md:p-2"
+        className="peer w-full appearance-none rounded-md border-2 border-gray-400 bg-white px-3 focus:ring-0 focus:drop-shadow-xl h-10 sm:h-11 md:h-12"
         required
         autoComplete="off"
       />
