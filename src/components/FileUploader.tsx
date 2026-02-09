@@ -86,7 +86,7 @@ const FileUploader = ({
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="h-full w-full space-y-4">
       <div className="flex flex-col gap-2">
         <label className="text-sm">{label}</label>
         <hr className="border-slate-200" />
@@ -104,8 +104,8 @@ const FileUploader = ({
           setIsDragging(false);
           if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
         }}
-        className={`flex h-32 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed transition ${
-          isDragging ? 'border-blue-500 bg-blue-50' : 'border-slate-300'
+        className={`flex h-52 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed transition ${
+          isDragging ? 'border-secondary bg-blue-50' : 'border-slate-300'
         }`}
       >
         <p className="text-sm text-slate-600">Drag & drop files here</p>
