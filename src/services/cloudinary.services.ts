@@ -4,7 +4,12 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export const uploadToCloudinary = async (
   file: File,
   onProgress?: (progress: number) => void,
-): Promise<{ url: string; public_id: string }> => {
+): Promise<{
+  url: string;
+  public_id: string;
+  filename: string;
+  created_at: string;
+}> => {
   if (!CLOUD_NAME || !UPLOAD_PRESET) {
     throw new Error('Cloudinary configuration missing');
   }
@@ -29,6 +34,8 @@ export const uploadToCloudinary = async (
           resolve({
             url: data.secure_url,
             public_id: data.public_id,
+            filename: data.display_name || data.original_filename,
+            created_at: data.created_at,
           });
         } catch (error) {
           reject(new Error('Failed to parse response'));
