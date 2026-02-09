@@ -1,18 +1,18 @@
-import Button from "../../components/Button";
 import React, { useState } from "react";
-import InputFeild from "../../components/InputField";
-import PasswordField from "../../components/PasswordField";
-import type { registerPageInterface } from "../../utils/interfaces/authInterface";
-import { userRegistration } from "../../services/auth.services";
-import { registerSchema } from "../../utils/validation/authSchema";
-import { ZodError } from "zod";
 import toast from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ZodError } from "zod";
+import type { loginPageInterface } from "../../utils/interfaces/authInterface";
+import { loginSchema } from "../../utils/validation/authSchema";
+import { userLogin } from "../../services/auth.services";
+import PasswordField from "../../components/PasswordField";
+import InputFeild from "../../components/InputField";
+import Button from "../../components/Button";
+import { Link } from "react-router-dom";
 
-const RegisterPage = () => {
+const LoginPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<registerPageInterface>({
-    name: "",
+  const [data, setData] = useState<loginPageInterface>({
     email: "",
     password: "",
   });
@@ -28,17 +28,16 @@ const RegisterPage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const validData = registerSchema.parse(data);
-      const res = await userRegistration(validData);
+      const validData = loginSchema.parse(data);
+      const res = await userLogin(validData);
       if (res.data.success) {
         toast.success(res.data.message);
         setData({
-          name: "",
           email: "",
           password: "",
         });
         setTimeout(() => {
-          navigate("/login");
+          navigate("/dashboard");
         }, 1000);
       } else {
         toast.error(res.data.message);
@@ -49,7 +48,7 @@ const RegisterPage = () => {
         return;
       }
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || "Registration failed");
+        toast.error(error.response.data.message || "Login failed");
       } else {
         toast.error("Unexpected error occurred");
       }
@@ -62,17 +61,9 @@ const RegisterPage = () => {
       <div className="flex w-full flex-col items-center justify-center gap-4 p-8 md:p-12 ">
         <div className="flex w-full flex-col gap-9 md:px-20 max-w-xl">
           <h2 className="text-2xl font-bold sm:text-3xl md:text-4xl">
-            Sign Up for Fix Board
+            Sign In for Fix Board
           </h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <InputFeild
-              name="name"
-              type="text"
-              text="Name"
-              onChange={handleChange}
-              disabled={loading}
-              required
-            />
             <InputFeild
               name="email"
               type="email"
@@ -90,19 +81,22 @@ const RegisterPage = () => {
                 disabled={loading}
                 required
               />
+              <span className="mt-1 self-end text-xs">
+                <a href="/resetpassword">Forgot password?</a>
+              </span>
             </div>
 
             <div className="flex w-full flex-col gap-2">
               <Button
-                text="Sign up"
+                text="Sign in"
                 isLoading={loading}
                 disabled={loading}
                 type="submit"
               />
               <span className="mt-1 text-center">
-                Already have an account?{" "}
-                <span className="font-bold cursor-pointer">
-                  <a href="/login">Sign in</a>
+                Didn't have an account?{" "}
+                <span className="font-bold">
+                  <Link to="/register">Sign up</Link>
                 </span>
               </span>
             </div>
@@ -243,4 +237,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
