@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { uploadToCloudinary } from '../services/cloudinary.services';
+import { GrStatusGood } from 'react-icons/gr';
+import { TbPlayerStop } from 'react-icons/tb';
 
 interface UploadedFile {
   file: File;
@@ -8,13 +10,19 @@ interface UploadedFile {
   id: string;
 }
 
+interface Attachment {
+  name: string;
+  url: string;
+  uploadedAt: string;
+}
+
 interface FileUploaderProps {
   accept?: string;
   maxSizeMB?: number;
   label: string;
   name: string;
-  onUpload?: (url: string) => void;
-  onChange?: (urls: string[]) => void;
+  onUpload?: (attachment: Attachment) => void;
+  onChange?: (attachments: Attachment[]) => void;
 }
 
 const FileUploader = ({
@@ -29,16 +37,21 @@ const FileUploader = ({
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState('');
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   useEffect(() => {
     return () => {
-      files.forEach((f) => URL.revokeObjectURL(f.preview));
+      files.forEach((file) => {
+        if (file.preview.startsWith('blob:')) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
     };
   }, [files]);
 
   const handleFiles = async (selectedFiles: FileList) => {
     setError('');
+    const newAttachments: Attachment[] = [];
 
     for (const file of Array.from(selectedFiles)) {
       if (file.size > maxSizeMB * 1024 * 1024) {
@@ -46,43 +59,70 @@ const FileUploader = ({
         continue;
       }
 
-      const id = `${Date.now()}-${Math.random()}`;
-      const preview = URL.createObjectURL(file);
+      const fileId = `${Date.now()}-${Math.random()}`;
+      const previewUrl = URL.createObjectURL(file);
 
       const newFile: UploadedFile = {
         file,
-        preview,
+        preview: previewUrl,
         progress: 0,
-        id,
+        id: fileId,
       };
 
-      setFiles((prev) => [...prev, newFile]);
+      setFiles((previous) => [...previous, newFile]);
 
       try {
         const updateProgress = (progress: number) => {
-          setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, progress } : f)));
+          setFiles((previous) =>
+            previous.map((item) => (item.id === fileId ? { ...item, progress } : item)),
+          );
         };
 
         const uploadResult = await uploadToCloudinary(file, updateProgress);
-        const url = uploadResult.url;
 
-        setFiles((prev) =>
-          prev.map((f) => (f.id === id ? { ...f, progress: 100, preview: url } : f)),
+        const attachment: Attachment = {
+          name: uploadResult.filename,
+          url: uploadResult.url,
+          uploadedAt: uploadResult.created_at,
+        };
+
+        setFiles((previous) =>
+          previous.map((item) =>
+            item.id === fileId ? { ...item, progress: 100, preview: uploadResult.url } : item,
+          ),
         );
-        const updatedUrls = [...uploadedUrls, url];
-        setUploadedUrls(updatedUrls);
 
-        onUpload?.(url);
-        onChange?.(updatedUrls);
-      } catch (err) {
+        newAttachments.push(attachment);
+        onUpload?.(attachment);
+      } catch {
         setError('Upload failed');
-        setFiles((prev) => prev.filter((f) => f.id !== id));
+        setFiles((previous) => previous.filter((item) => item.id !== fileId));
       }
+    }
+
+    if (newAttachments.length > 0) {
+      const updated = [...attachments, ...newAttachments];
+      setAttachments(updated);
+      onChange?.(updated);
     }
   };
 
-  const removeFile = (id: string) => {
-    setFiles((prev) => prev.filter((f) => f.id !== id));
+  const removeFile = (fileId: string) => {
+    const targetFile = files.find((item) => item.id === fileId);
+
+    if (targetFile) {
+      if (!targetFile.preview.startsWith('blob:')) {
+        const updated = attachments.filter((attachment) => attachment.url !== targetFile.preview);
+        setAttachments(updated);
+        onChange?.(updated);
+      }
+
+      if (targetFile.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(targetFile.preview);
+      }
+    }
+
+    setFiles((previous) => previous.filter((item) => item.id !== fileId));
   };
 
   return (
@@ -94,15 +134,17 @@ const FileUploader = ({
 
       <div
         onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault();
+        onDragOver={(event) => {
+          event.preventDefault();
           setIsDragging(true);
         }}
         onDragLeave={() => setIsDragging(false)}
-        onDrop={(e) => {
-          e.preventDefault();
+        onDrop={(event) => {
+          event.preventDefault();
           setIsDragging(false);
-          if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+          if (event.dataTransfer.files) {
+            handleFiles(event.dataTransfer.files);
+          }
         }}
         className={`flex h-52 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed transition ${
           isDragging ? 'border-secondary bg-blue-50' : 'border-slate-300'
@@ -118,10 +160,10 @@ const FileUploader = ({
         type="file"
         accept={accept}
         hidden
-        onChange={(e) => {
-          if (e.target.files) {
-            handleFiles(e.target.files);
-            e.target.value = '';
+        onChange={(event) => {
+          if (event.target.files) {
+            handleFiles(event.target.files);
+            event.target.value = '';
           }
         }}
       />
@@ -132,7 +174,11 @@ const FileUploader = ({
         {files.map((item) => (
           <div key={item.id} className="flex w-full items-center gap-3 rounded-md border p-2">
             {item.file.type.startsWith('image/') ? (
-              <img src={item.preview} className="h-12 w-12 rounded object-cover" alt="preview" />
+              <img
+                src={item.preview}
+                className="h-12 w-12 rounded object-cover"
+                alt="File preview"
+              />
             ) : (
               <div className="flex h-12 w-12 items-center justify-center rounded bg-gray-100">
                 <span className="text-xs font-medium">
@@ -144,14 +190,28 @@ const FileUploader = ({
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium">{item.file.name}</p>
               <div className="mt-1 h-2 rounded bg-slate-200">
-                <div className="bg-secondary h-2 rounded" style={{ width: `${item.progress}%` }} />
+                <div
+                  className="bg-secondary h-2 rounded transition-all duration-300"
+                  style={{ width: `${item.progress}%` }}
+                />
               </div>
+              {item.progress === 100 && <p className="mt-1 text-[10px]">Upload complete</p>}
             </div>
 
-            <span className="text-xs">{item.progress}%</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs">{item.progress}%</span>
+              {item.progress === 100 && (
+                <span className="cursor-pointer text-sm text-green-500">
+                  <GrStatusGood />
+                </span>
+              )}
+            </div>
 
-            <button onClick={() => removeFile(item.id)} className="text-slate-400">
-              ✕
+            <button
+              onClick={() => removeFile(item.id)}
+              className="cursor-pointer text-slate-400 hover:text-red-500"
+            >
+              <TbPlayerStop />
             </button>
           </div>
         ))}
