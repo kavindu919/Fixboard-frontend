@@ -1,0 +1,57 @@
+import { LuActivity, LuFilePlus, LuLayers, LuListTodo } from "react-icons/lu";
+import { VscDashboard } from "react-icons/vsc";
+import { Link, useLocation } from "react-router-dom";
+
+const Sidebar = () => {
+  const navLinks = [
+    {
+      label: "Dashboard",
+      icon: VscDashboard,
+      path: "/",
+    },
+    {
+      label: "My Issues",
+      icon: LuListTodo,
+      path: "/",
+    },
+    {
+      label: "Reported by Me",
+      icon: LuFilePlus,
+      path: "/",
+    },
+    {
+      label: "All Issues",
+      icon: LuLayers,
+      path: "/",
+    },
+    {
+      label: "Activity Feed",
+      icon: LuActivity,
+      path: "/",
+    },
+  ];
+  const { pathname } = useLocation();
+  return (
+    <aside className="flex h-screen w-full flex-col items-center justify-start border-r shadow-2xl">
+      <div className="flex h-16 w-full items-center justify-center">Logo</div>
+      <nav className="mt-6 flex w-full flex-col space-y-1 px-3">
+        {navLinks.map((item, key) => {
+          const Icon = item.icon;
+
+          return (
+            <Link
+              key={key}
+              to={item.path}
+              className={`flex items-center space-x-3 rounded-md px-3 py-2 text-sm font-medium text-gray-700 ${pathname === item.path ? "bg-theme" : "transition-colors hover:bg-theme hover:text-black"} `}
+            >
+              <Icon className="h-4 w-4 text-black md:h-5 md:w-5 lg:h-6 lg:w-6" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+};
+
+export default Sidebar;
