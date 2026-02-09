@@ -11,7 +11,7 @@ const TextArea = ({ name, ...rest }: TextAreaProps) => {
       <textarea
         name={name}
         {...rest}
-        className="bg-moonstone h-32 w-full rounded-md border-2 border-slate-300 p-2 md:h-60"
+        className="bg-moonstone h-32 w-full rounded-md border-3 border-dotted border-slate-300 p-2 md:h-60"
       ></textarea>
     </div>
   );
