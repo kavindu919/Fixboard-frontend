@@ -1,23 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 
 interface TagInputProps {
   placeholder?: string;
   label: string;
+  value?: string[];
   initialTags?: string[];
-  onChange?: (tags: string[]) => void;
+  onTagsChange?: (tags: string[]) => void;
+  disabled: boolean;
 }
 
-const TagInput: React.FC<TagInputProps> = ({ label, initialTags = [], onChange, ...rest }) => {
+const TagInput: React.FC<TagInputProps> = ({
+  label,
+  disabled,
+  value = [],
+  onTagsChange,
+  ...rest
+}) => {
   const [tagInput, setTagInput] = useState('');
-  const [tags, setTags] = useState<string[]>(initialTags);
-
+  const [tags, setTags] = useState<string[]>(value);
+  useEffect(() => {
+    setTags(value);
+  }, [value]);
   const handleAddTag = () => {
     const trimmed = tagInput.trim();
     if (trimmed && !tags.includes(trimmed)) {
       const newTags = [...tags, trimmed];
       setTags(newTags);
-      onChange?.(newTags);
+      onTagsChange?.(newTags);
       setTagInput('');
     }
   };
@@ -25,7 +35,7 @@ const TagInput: React.FC<TagInputProps> = ({ label, initialTags = [], onChange, 
   const handleRemoveTag = (tagToRemove: string) => {
     const newTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(newTags);
-    onChange?.(newTags);
+    onTagsChange?.(newTags);
   };
 
   return (
@@ -35,6 +45,7 @@ const TagInput: React.FC<TagInputProps> = ({ label, initialTags = [], onChange, 
         <input
           type="text"
           value={tagInput}
+          disabled={disabled}
           {...rest}
           onChange={(e) => setTagInput(e.target.value)}
           onKeyPress={(e) => {
