@@ -1,13 +1,28 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #f8fafc;
+  --color-secondary: #1e293b;
+  --color-accent: #3b82f6;
+  --color-moonstone: #f6f6fb;
+}
 
 * {
   font-family:
-    "Poppins",
+    'Poppins',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     sans-serif;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes blob {
