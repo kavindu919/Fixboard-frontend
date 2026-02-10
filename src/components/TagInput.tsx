@@ -73,6 +73,7 @@ const TagInput: React.FC<TagInputProps> = ({
             {tag}
             <button
               type="button"
+              disabled={disabled}
               onClick={() => handleRemoveTag(tag)}
               className="cursor-pointer text-slate-500"
             >
