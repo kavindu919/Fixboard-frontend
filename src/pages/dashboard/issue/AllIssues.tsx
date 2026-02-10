@@ -34,7 +34,7 @@ const AllIssues = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [query]);
 
   const fetchData = async () => {
     try {
@@ -76,7 +76,7 @@ const AllIssues = () => {
         <StatCard label="Closed" value="1" />
       </section>
       <section>
-        <Filters />
+        <Filters query={query} setQuery={setQuery} />
       </section>
       <section>
         <table className="tableoutline">
