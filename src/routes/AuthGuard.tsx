@@ -11,7 +11,6 @@ const AuthGuard = () => {
     try {
       const res = await axiosInstance.get('/auth/me');
       if (res.data.success) {
-        console.log(res.data.sccess);
         setIsAuth(true);
       } else {
         setIsAuth(false);
@@ -23,7 +22,6 @@ const AuthGuard = () => {
   if (isAuth === null) {
     return <div>Checking authentication...</div>;
   }
-  console.log('isAuth', isAuth);
   return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
