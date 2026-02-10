@@ -25,6 +25,22 @@
   display: none;
 }
 
+.tableoutline {
+  @apply w-full text-left text-sm text-ellipsis text-slate-600 md:text-clip;
+}
+.tablehead {
+  @apply bg-slate-50 text-xs text-slate-500 uppercase;
+}
+.tableheadcell {
+  @apply p-3 font-medium;
+}
+.tablebody {
+  @apply divide-y divide-slate-200;
+}
+.tabledata {
+  @apply p-3 text-slate-500;
+}
+
 @keyframes blob {
   0%,
   100% {
