@@ -5,17 +5,24 @@ import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
 import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
-import { createIssue, getAllUsers } from '../../../services/issueservice';
+import {
+  createIssue,
+  getAllUsers,
+  getIssueById,
+  updateIssue,
+} from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import FormButton from '../../../components/FormButton';
 import { issueSchema } from '../../../utils/validation/issueSchema';
 import { ZodError } from 'zod';
 import CloudinaryUploader from '../../../components/CloudinaryUploader';
+import { useParams } from 'react-router-dom';
 
-const CreateIssue = () => {
+const EditIssue = () => {
   const { pathname } = useLocation();
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -28,9 +35,11 @@ const CreateIssue = () => {
     };
 
     fetchUsers();
+    fetchIssue();
   }, []);
 
   const [data, setData] = useState<IssueProps>({
+    id: '',
     title: '',
     description: '',
     status: 'open',
@@ -43,6 +52,37 @@ const CreateIssue = () => {
     assignedToId: null,
     attachments: [],
   });
+
+  const fetchIssue = async () => {
+    console.log('fetchUsers running');
+    console.log('id', id);
+    if (!id) {
+      return;
+    }
+    try {
+      const res = await getIssueById(id);
+      if (res.data.success) {
+        const issue = res.data.data;
+        setData({
+          id: issue.id,
+          title: issue.title,
+          description: issue.description,
+          status: issue.status,
+          priority: issue.priority,
+          severity: issue.severity,
+          tags: issue.tags || [],
+          dueDate: issue.dueDate ? new Date(issue.dueDate) : null,
+          estimatedHours: issue.estimatedHours,
+          actualHours: issue.actualHours,
+          assignedToId: issue.assignedToId,
+          attachments: issue.attachments || [],
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to load issue details');
+    }
+  };
 
   const handleChnage = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -58,7 +98,7 @@ const CreateIssue = () => {
     try {
       setLoading(true);
       const validData = issueSchema.parse(data);
-      const res = await createIssue(validData);
+      const res = await updateIssue(validData);
       if (res.data.success) {
         toast.success(res.data.message);
         setData({
@@ -93,7 +133,7 @@ const CreateIssue = () => {
       setLoading(false);
     }
   };
-
+  console.log('data', data);
   return (
     <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
       <header className="flex flex-col gap-3">
@@ -331,4 +371,4 @@ const CreateIssue = () => {
   );
 };
 
-export default CreateIssue;
+export default EditIssue;

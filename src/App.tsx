@@ -1,10 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import RegisterPage from "./pages/auth/RegisterPage";
-import LoginPage from "./pages/auth/LoginPage";
-import DashboardLayout from "./layouts/DashboardLayout";
-import AllIssues from "./pages/dashboard/issue/AllIssues";
-import CreateIssue from "./pages/dashboard/issue/CreateIssue";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
+import RegisterPage from './pages/auth/RegisterPage';
+import LoginPage from './pages/auth/LoginPage';
+import DashboardLayout from './layouts/DashboardLayout';
+import AllIssues from './pages/dashboard/issue/AllIssues';
+import CreateIssue from './pages/dashboard/issue/CreateIssue';
+import EditIssue from './pages/dashboard/issue/EditIssue';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="issues" element={<AllIssues />} />
           <Route path="issues/create" element={<CreateIssue />} />
+          <Route path="issues/edit/:id" element={<EditIssue />} />
         </Route>
       </Routes>
     </BrowserRouter>

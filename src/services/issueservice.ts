@@ -29,3 +29,21 @@ export const getAllIssues = async (query: QueryProps) => {
     throw error;
   }
 };
+
+export const getIssueById = async (id: string) => {
+  try {
+    const res = await axiosInstance.get(`/issues/get-issue/${id}`);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateIssue = async (data: IssueProps) => {
+  try {
+    const res = await axiosInstance.post('/issues/update-issue', data);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

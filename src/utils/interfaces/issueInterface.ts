@@ -1,4 +1,5 @@
 export interface IssueProps {
+  id?: string;
   title: string;
   description: string;
   status: 'open' | 'in_progress' | 'resolved' | 'closed';
@@ -18,6 +19,7 @@ export interface IssuePageUserProps {
 }
 
 export interface AllIssuePageProps {
+  id: string;
   title: string;
   description: string;
   status: 'open' | 'in_progress' | 'resolved' | 'closed' | '';

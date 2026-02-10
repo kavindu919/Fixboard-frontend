@@ -1,5 +1,8 @@
 import * as z from 'zod';
 export const issueSchema = z.object({
+  id: z.string({
+    message: 'Issue id  required',
+  }),
   title: z.string({
     message: 'Title is required',
   }),

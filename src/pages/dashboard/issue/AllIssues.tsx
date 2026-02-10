@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import StatCard from '../../../components/StatCard';
 import { useEffect, useState } from 'react';
 import Filters from '../../../components/Filters';
@@ -10,9 +10,13 @@ import type {
   PaginationProps,
   QueryProps,
 } from '../../../utils/interfaces/issueInterface';
+import { FiEdit2 } from 'react-icons/fi';
+import { MdDeleteOutline } from 'react-icons/md';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState<QueryProps>({
     search: '',
     status: '',
@@ -105,7 +109,17 @@ const AllIssues = () => {
                   {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
                 </td>
 
-                <td className="tabledata">Actions</td>
+                <td className="tabledata flex flex-row items-center justify-center gap-3">
+                  <button
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/issues/edit/${data.id}`)}
+                  >
+                    <FiEdit2 />
+                  </button>
+                  <button className="cursor-pointer">
+                    <MdDeleteOutline />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
