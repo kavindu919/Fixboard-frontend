@@ -13,6 +13,7 @@ import type {
 import { FiEdit2 } from 'react-icons/fi';
 import { MdDeleteOutline } from 'react-icons/md';
 import PopUpModalComponent from '../../../components/PopUpModalComponent';
+import { GrCircleInformation } from 'react-icons/gr';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
@@ -144,6 +145,12 @@ const AllIssues = () => {
                 </td>
 
                 <td className="tabledata flex flex-row items-center justify-center gap-3">
+                  <button
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
+                  >
+                    <GrCircleInformation />
+                  </button>
                   <button
                     className="cursor-pointer"
                     onClick={() => navigate(`/issues/edit/${data.id}`)}
