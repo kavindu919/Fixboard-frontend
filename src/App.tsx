@@ -6,6 +6,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 import AllIssues from './pages/dashboard/issue/AllIssues';
 import CreateIssue from './pages/dashboard/issue/CreateIssue';
 import EditIssue from './pages/dashboard/issue/EditIssue';
+import AuthGuard from './routes/AuthGuard';
 
 function App() {
   return (
@@ -13,10 +14,12 @@ function App() {
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route path="issues" element={<AllIssues />} />
-          <Route path="issues/create" element={<CreateIssue />} />
-          <Route path="issues/edit/:id" element={<EditIssue />} />
+        <Route element={<AuthGuard />}>
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route path="issues" element={<AllIssues />} />
+            <Route path="issues/create" element={<CreateIssue />} />
+            <Route path="issues/edit/:id" element={<EditIssue />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
