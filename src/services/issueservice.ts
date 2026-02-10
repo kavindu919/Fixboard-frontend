@@ -1,5 +1,5 @@
 import axiosInstance from '../api/axiosInstance';
-import type { IssueProps } from '../utils/interfaces/issueInterface';
+import type { IssueProps, QueryProps } from '../utils/interfaces/issueInterface';
 
 export const createIssue = async (data: IssueProps) => {
   try {
@@ -13,6 +13,17 @@ export const createIssue = async (data: IssueProps) => {
 export const getAllUsers = async () => {
   try {
     const res = await axiosInstance.get('/issues/all-users');
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllIssues = async (query: QueryProps) => {
+  try {
+    const res = await axiosInstance.get('/issues/all-issues', {
+      params: query,
+    });
     return res;
   } catch (error) {
     throw error;
