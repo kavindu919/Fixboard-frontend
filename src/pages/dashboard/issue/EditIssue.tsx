@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { IssuePageUserProps, IssueProps } from '../../../utils/interfaces/issueInterface';
 import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
 import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
-import {
-  createIssue,
-  getAllUsers,
-  getIssueById,
-  updateIssue,
-} from '../../../services/issueservice';
+import { getAllUsers, getIssueById, updateIssue } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import FormButton from '../../../components/FormButton';
 import { issueSchema } from '../../../utils/validation/issueSchema';
@@ -23,6 +18,7 @@ const EditIssue = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -114,6 +110,7 @@ const EditIssue = () => {
           assignedToId: null,
           attachments: [],
         });
+        navigate('/issues');
       } else {
         toast.error(res.data.message);
       }
