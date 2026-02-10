@@ -47,3 +47,12 @@ export const updateIssue = async (data: IssueProps) => {
     throw error;
   }
 };
+
+export const deleteIssue = async (id: string) => {
+  try {
+    const res = await axiosInstance.post('/issues/delete-issue', { id });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

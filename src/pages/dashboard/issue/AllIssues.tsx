@@ -3,7 +3,7 @@ import StatCard from '../../../components/StatCard';
 import { useEffect, useState } from 'react';
 import Filters from '../../../components/Filters';
 import Pagination from '../../../components/Pagination';
-import { getAllIssues } from '../../../services/issueservice';
+import { deleteIssue, getAllIssues } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import type {
   AllIssuePageProps,
@@ -12,10 +12,19 @@ import type {
 } from '../../../utils/interfaces/issueInterface';
 import { FiEdit2 } from 'react-icons/fi';
 import { MdDeleteOutline } from 'react-icons/md';
+import PopUpModalComponent from '../../../components/PopUpModalComponent';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<{
+    id: string;
+    isOpen: boolean;
+  }>({
+    id: '',
+    isOpen: false,
+  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [query, setQuery] = useState<QueryProps>({
     search: '',
@@ -55,6 +64,31 @@ const AllIssues = () => {
       } else {
         toast.error('Unexpected error occurred');
       }
+    }
+  };
+
+  const handleDeleteIssue = async (id: string) => {
+    try {
+      setLoading(true);
+      const res = await deleteIssue(id);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setIsDeletePopupOpen({
+          id: '',
+          isOpen: false,
+        });
+        fetchData();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Unexpected error occurred');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,7 +150,15 @@ const AllIssues = () => {
                   >
                     <FiEdit2 />
                   </button>
-                  <button className="cursor-pointer">
+                  <button
+                    className="cursor-pointer"
+                    onClick={() =>
+                      setIsDeletePopupOpen({
+                        id: data.id,
+                        isOpen: true,
+                      })
+                    }
+                  >
                     <MdDeleteOutline />
                   </button>
                 </td>
@@ -134,6 +176,23 @@ const AllIssues = () => {
           }}
         />
       </section>
+      {isDeletePopupOpen.isOpen && (
+        <PopUpModalComponent
+          isOpen={loading}
+          title="Delete Issue"
+          onClose={() =>
+            setIsDeletePopupOpen({
+              id: '',
+              isOpen: false,
+            })
+          }
+          onConfirm={() => handleDeleteIssue(isDeletePopupOpen.id)}
+          confirmText={loading ? 'Deleting...' : 'Delete'}
+          cancelText="Cancel"
+        >
+          <span>Are you sure you want to delete this issue?</span>
+        </PopUpModalComponent>
+      )}
     </div>
   );
 };
