@@ -236,8 +236,9 @@ const CreateIssue = () => {
                 label: items.name,
               }))}
               onChange={handleChnage}
-              value={data.assignedToId ?? undefined}
+              value={data.assignedToId ?? ''}
               disabled={loading}
+              placeholder="Select a user"
             />
           </section>
         </div>
@@ -255,7 +256,7 @@ const CreateIssue = () => {
               <CloudinaryUploader
                 name="attachments"
                 label="Attachments"
-                value={data.attachments}
+                value={data.attachments || []}
                 onChange={(urls) => {
                   setData({
                     ...data,
@@ -294,9 +295,10 @@ const CreateIssue = () => {
               min={0}
               placeholder="e.g. 8"
               onChange={(e) => {
+                const value = e.target.value;
                 setData({
                   ...data,
-                  estimatedHours: Number(e.target.value),
+                  estimatedHours: value === '' ? null : Number(value),
                 });
               }}
               value={data.estimatedHours !== null ? data.estimatedHours : ''}
@@ -309,9 +311,10 @@ const CreateIssue = () => {
               min={0}
               placeholder="e.g. 10"
               onChange={(e) => {
+                const value = e.target.value;
                 setData({
                   ...data,
-                  actualHours: Number(e.target.value),
+                  actualHours: value === '' ? null : Number(value),
                 });
               }}
               value={data.actualHours !== null ? data.actualHours : ''}

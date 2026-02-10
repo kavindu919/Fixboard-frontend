@@ -28,13 +28,15 @@ export const issueSchema = z.object({
       message: 'Estimated hours must be a number',
     })
     .int()
-    .positive(),
+    .positive()
+    .nullable(),
   actualHours: z
     .number({
       message: 'Actual hours must be a number',
     })
     .int()
     .positive()
+    .nullable()
     .optional(),
   attachments: z
     .array(

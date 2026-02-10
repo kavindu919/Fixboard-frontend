@@ -9,9 +9,16 @@ interface FormDropdownProps extends React.InputHTMLAttributes<HTMLSelectElement>
   label: string;
   name: string;
   options: Option[];
+  placeholder?: string;
 }
 
-const FormDropdown = ({ label, name, options, ...rest }: FormDropdownProps) => {
+const FormDropdown = ({
+  label,
+  name,
+  options,
+  placeholder = 'Select an option',
+  ...rest
+}: FormDropdownProps) => {
   const [state, setState] = useState<boolean>(false);
   return (
     <div className="flex w-full flex-col gap-2">
@@ -28,6 +35,9 @@ const FormDropdown = ({ label, name, options, ...rest }: FormDropdownProps) => {
           }}
           {...rest}
         >
+          <option value="" disabled>
+            {placeholder}
+          </option>
           {options.map((item) => (
             <option key={item.value} value={item.value}>
               {item.label}
