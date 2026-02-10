@@ -5,12 +5,12 @@ import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
 import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
-import FileUploader from '../../../components/FileUploader';
 import { createIssue, getAllUsers } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import FormButton from '../../../components/FormButton';
 import { issueSchema } from '../../../utils/validation/issueSchema';
 import { ZodError } from 'zod';
+import CloudinaryUploader from '../../../components/CloudinaryUploader';
 
 const CreateIssue = () => {
   const { pathname } = useLocation();
@@ -93,7 +93,7 @@ const CreateIssue = () => {
       setLoading(false);
     }
   };
-
+  console.log('data', data);
   return (
     <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
       <header className="flex flex-col gap-3">
@@ -101,24 +101,49 @@ const CreateIssue = () => {
           {pathname.substring(1).split('/').join(' / ')}
         </h5>
       </header>
+
       <div className="flex w-full flex-1 flex-col gap-3 md:flex-row">
-        <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4 md:w-2/3">
+        <div className="flex w-full flex-col gap-3 md:w-3/4">
+          <div className="flex h-full w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4">
+            <header className="flex flex-col items-start justify-start gap-1">
+              <h4 className="text-base font-medium">Issue Details</h4>
+              <h5 className="text-sm font-normal text-slate-400">
+                Provide a clear and concise description of the issue.
+              </h5>
+            </header>
+            <section className="flex flex-col gap-3">
+              <FormInput
+                label="Issue Title"
+                name="title"
+                type="text"
+                value={data.title}
+                placeholder="e.g. Login button not working on mobile"
+                onChange={handleChnage}
+                disabled={loading}
+              />
+              <TextArea
+                name="description"
+                placeholder="Describe the issue in detail..."
+                onChange={(e) => {
+                  setData({
+                    ...data,
+                    description: e.target.value,
+                  });
+                }}
+                value={data.description}
+                disabled={loading}
+              />
+            </section>
+          </div>
+        </div>
+        <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4 md:w-1/4">
           <header className="flex flex-col items-start justify-start gap-1">
             <h4 className="text-base font-medium">Basic Issue Information</h4>
             <h5 className="text-sm font-normal text-slate-400">
               Define the foundational details of your issue
             </h5>
           </header>
-          <section className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
-            <FormInput
-              label="Issue Title"
-              name="title"
-              type="text"
-              value={data.title}
-              placeholder="e.g. Login button not working on mobile"
-              onChange={handleChnage}
-              disabled={loading}
-            />
+          <section className="grid w-full grid-cols-1 gap-3 md:grid-cols-1">
             <FormDropdown
               label="Status"
               name="status"
@@ -144,52 +169,54 @@ const CreateIssue = () => {
               onChange={handleChnage}
               disabled={loading}
             />
-            <FormDropdown
-              label="Priority"
-              name="priority"
-              options={[
-                {
-                  value: 'low',
-                  label: 'Low',
-                },
-                {
-                  value: 'medium',
-                  label: 'Medium',
-                },
-                {
-                  value: 'high',
-                  label: 'High',
-                },
-                {
-                  value: 'critical',
-                  label: 'Critical',
-                },
-              ]}
-              value={data.priority}
-              onChange={handleChnage}
-              disabled={loading}
-            />
-            <FormDropdown
-              label="Severity"
-              name="severity"
-              options={[
-                {
-                  value: 'minor',
-                  label: 'Minor',
-                },
-                {
-                  value: 'major',
-                  label: 'Major',
-                },
-                {
-                  value: 'critical',
-                  label: 'Critical',
-                },
-              ]}
-              value={data.severity}
-              onChange={handleChnage}
-              disabled={loading}
-            />
+            <section className="flex flex-row items-center justify-between gap-1.5">
+              <FormDropdown
+                label="Priority"
+                name="priority"
+                options={[
+                  {
+                    value: 'low',
+                    label: 'Low',
+                  },
+                  {
+                    value: 'medium',
+                    label: 'Medium',
+                  },
+                  {
+                    value: 'high',
+                    label: 'High',
+                  },
+                  {
+                    value: 'critical',
+                    label: 'Critical',
+                  },
+                ]}
+                value={data.priority}
+                onChange={handleChnage}
+                disabled={loading}
+              />
+              <FormDropdown
+                label="Severity"
+                name="severity"
+                options={[
+                  {
+                    value: 'minor',
+                    label: 'Minor',
+                  },
+                  {
+                    value: 'major',
+                    label: 'Major',
+                  },
+                  {
+                    value: 'critical',
+                    label: 'Critical',
+                  },
+                ]}
+                value={data.severity}
+                onChange={handleChnage}
+                disabled={loading}
+              />
+            </section>
             <TagInput
               label="Tag"
               onTagsChange={(tags) => {
@@ -214,7 +241,32 @@ const CreateIssue = () => {
             />
           </section>
         </div>
-        <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4 md:w-1/3">
+      </div>
+      <div className="flex w-full flex-1 flex-col gap-3 md:flex-row">
+        <div className="flex w-full flex-col gap-3 md:w-3/4">
+          <div className="flex h-full w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4">
+            <header className="flex flex-col items-start justify-start gap-1">
+              <h4 className="text-base font-medium">Uploads</h4>
+              <h5 className="text-sm font-normal text-slate-400">
+                Upload files related to this issue
+              </h5>
+            </header>
+            <section className="w-full">
+              <CloudinaryUploader
+                name="attachments"
+                label="Attachments"
+                value={data.attachments}
+                onChange={(urls) => {
+                  setData({
+                    ...data,
+                    attachments: urls,
+                  });
+                }}
+              />
+            </section>
+          </div>
+        </div>
+        <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4 md:w-1/4">
           <header className="flex flex-col items-start justify-start gap-1">
             <h4 className="text-base font-medium">Timeline</h4>
             <h5 className="text-sm font-normal text-slate-400">Set time estimates</h5>
@@ -268,54 +320,7 @@ const CreateIssue = () => {
           </section>
         </div>
       </div>
-      <div className="flex w-full flex-1 flex-col gap-3 md:flex-row">
-        <div className="flex w-full flex-col gap-3 md:w-2/3">
-          <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4">
-            <header className="flex flex-col items-start justify-start gap-1">
-              <h4 className="text-base font-medium">Attachments</h4>
-              <h5 className="text-sm font-normal text-slate-400">
-                Upload files related to this issue
-              </h5>
-            </header>
-            <section className="w-full">
-              <TextArea
-                name="description"
-                placeholder="Describe the issue in detail..."
-                onChange={(e) => {
-                  setData({
-                    ...data,
-                    description: e.target.value,
-                  });
-                }}
-                value={data.description}
-                disabled={loading}
-              />
-            </section>
-          </div>
-        </div>
-        <div className="flex w-full flex-col gap-3 md:w-1/3">
-          <div className="flex h-full w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4">
-            <header className="flex flex-col items-start justify-start gap-1">
-              <h4 className="text-base font-medium">Uploads</h4>
-              <h5 className="text-sm font-normal text-slate-400">
-                Upload files related to this issue
-              </h5>
-            </header>
-            <section className="w-full">
-              <FileUploader
-                name="attachments"
-                label="Attachments"
-                onChange={(urls) => {
-                  setData({
-                    ...data,
-                    attachments: urls,
-                  });
-                }}
-              />
-            </section>
-          </div>
-        </div>
-      </div>
+
       <div className="flex w-full flex-row items-center justify-end px-1.5">
         <FormButton text="Save" type="submit" isLoading={loading} disabled={loading} />
       </div>

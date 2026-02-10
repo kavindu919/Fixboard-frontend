@@ -5,7 +5,7 @@ interface TextAreaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
 
 const TextArea = ({ name, ...rest }: TextAreaProps) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex h-full flex-col gap-2">
       <span className="text-sm">Description</span>
       <hr className="w-full border border-slate-200" />
       <textarea
