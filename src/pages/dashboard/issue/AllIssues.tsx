@@ -14,6 +14,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { MdDeleteOutline } from 'react-icons/md';
 import PopUpModalComponent from '../../../components/PopUpModalComponent';
 import { GrCircleInformation } from 'react-icons/gr';
+import { PriorityBadge, StatusBadge } from '../../../utils/helpers/issueBadge';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
@@ -134,8 +135,13 @@ const AllIssues = () => {
             {data.map((data, key) => (
               <tr key={key}>
                 <td className="tabledata">{data.title ?? '-'}</td>
-                <td className="tabledata">{data.status ?? '-'}</td>
-                <td className="tabledata">{data.priority ?? '-'}</td>
+                <td className="tabledata">
+                  <StatusBadge status={data.status} />
+                </td>
+                <td className="tabledata">
+                  {' '}
+                  <PriorityBadge priority={data.priority} />{' '}
+                </td>
                 <td className="tabledata">{data.assignedToName ?? '-'}</td>
                 <td className="tabledata">
                   {data.dueDate ? new Date(data.dueDate).toLocaleDateString() : '-'}
