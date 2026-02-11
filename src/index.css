@@ -1,13 +1,44 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #f8fafc;
+  --color-secondary: #1e293b;
+  --color-accent: #3b82f6;
+  --color-moonstone: #f6f6fb;
+}
 
 * {
   font-family:
-    "Poppins",
+    'Poppins',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     sans-serif;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.tableoutline {
+  @apply w-full text-left text-sm text-ellipsis text-slate-600 md:text-clip;
+}
+.tablehead {
+  @apply bg-slate-50 text-xs text-slate-500 uppercase;
+}
+.tableheadcell {
+  @apply p-3 font-medium;
+}
+.tablebody {
+  @apply divide-y divide-slate-200;
+}
+.tabledata {
+  @apply p-3 text-slate-500;
 }
 
 @keyframes blob {
