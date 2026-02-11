@@ -5,18 +5,25 @@ import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
 import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
-import { getAllUsers, getIssueById, updateIssue } from '../../../services/issueservice';
+import {
+  getAllUsers,
+  getIssueById,
+  updateIssue,
+  updateIssueStatus,
+} from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import FormButton from '../../../components/FormButton';
 import { issueSchema } from '../../../utils/validation/issueSchema';
 import { ZodError } from 'zod';
 import CloudinaryUploader from '../../../components/CloudinaryUploader';
 import { useParams } from 'react-router-dom';
+import { FiCheck, FiLock } from 'react-icons/fi';
 
 const EditIssue = () => {
   const { pathname } = useLocation();
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -50,9 +57,8 @@ const EditIssue = () => {
   });
 
   const fetchIssue = async () => {
-    console.log('fetchUsers running');
-    console.log('id', id);
     if (!id) {
+      toast.error(' Unexpected error occurred');
       return;
     }
     try {
@@ -130,10 +136,33 @@ const EditIssue = () => {
       setLoading(false);
     }
   };
-  console.log('data', data);
+
+  const handleIssueState = async (id: string, status: string) => {
+    try {
+      if (!id) {
+        toast.error(' Unexpected error occurred');
+        return;
+      }
+      const res = await updateIssueStatus(id, status);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        fetchIssue();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message || 'Login failed');
+      } else {
+        console.log(error);
+        toast.error('Unexpected error occurred');
+      }
+    }
+  };
+
   return (
     <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
-      <header className="flex flex-col gap-3">
+      <header className="flex">
         <h5 className="text-xs text-slate-500 uppercase">
           {pathname.substring(1).split('/').join(' / ')}
         </h5>
@@ -181,6 +210,40 @@ const EditIssue = () => {
             </h5>
           </header>
           <section className="grid w-full grid-cols-1 gap-3 md:grid-cols-1">
+            <section className="flex flex-wrap">
+              {(data.resolvedAt || data.closedAt) && (
+                <div className="mt-1 flex gap-3 text-xs text-slate-400">
+                  {data.resolvedAt && (
+                    <span>Resolved: {new Date(data.resolvedAt).toLocaleDateString()}</span>
+                  )}
+                  {data.closedAt && (
+                    <span>Closed: {new Date(data.closedAt).toLocaleDateString()}</span>
+                  )}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                {data.status !== 'resolved' && data.status !== 'closed' && (
+                  <button
+                    type="button"
+                    onClick={() => handleIssueState(data.id!, 'resolved')}
+                    className="bg-primary text-secondary flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium"
+                  >
+                    <FiCheck className="h-4 w-4" />
+                    Mark as Resolved
+                  </button>
+                )}
+                {data.status !== 'closed' && (
+                  <button
+                    type="button"
+                    onClick={() => handleIssueState(data.id!, 'closed')}
+                    className="bg-primary text-secondary flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium"
+                  >
+                    <FiLock className="h-4 w-4" />
+                    Mark as Closed
+                  </button>
+                )}
+              </div>
+            </section>
             <FormDropdown
               label="Status"
               name="status"

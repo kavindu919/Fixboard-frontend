@@ -10,6 +10,8 @@ export interface IssueProps {
   estimatedHours: number | null;
   actualHours?: number | null;
   assignedToId?: string | null;
+  resolvedAt?: Date;
+  closedAt?: Date;
   attachments?: { name: string; url: string; uploadedAt: string }[];
 }
 
@@ -50,4 +52,11 @@ export interface PaginationProps {
   page: number;
   limit: number;
   total: number;
+}
+
+export interface IssueStatsProps {
+  open: number;
+  in_progress: number;
+  resolved: number;
+  closed: number;
 }
