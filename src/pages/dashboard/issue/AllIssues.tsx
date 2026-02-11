@@ -15,6 +15,7 @@ import { MdDeleteOutline } from 'react-icons/md';
 import PopUpModalComponent from '../../../components/PopUpModalComponent';
 import { GrCircleInformation } from 'react-icons/gr';
 import { PriorityBadge, StatusBadge } from '../../../utils/helpers/issueBadge';
+import { useDebounce } from '../../../utils/hooks/useDebounsehook';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
@@ -47,9 +48,22 @@ const AllIssues = () => {
   });
   const [data, setData] = useState<AllIssuePageProps[]>([]);
 
+  const debounced = useDebounce(400, query.search);
+
   useEffect(() => {
     fetchData();
-  }, [query]);
+  }, [
+    debounced,
+    query.status,
+    query.priority,
+    query.severity,
+    query.assignedToName,
+    query.createdById,
+    query.page,
+    query.limit,
+    query.sortBy,
+    query.sortOrder,
+  ]);
 
   const fetchData = async () => {
     try {

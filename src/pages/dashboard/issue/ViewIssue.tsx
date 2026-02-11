@@ -7,7 +7,6 @@ import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
 import { getAllUsers, getIssueById } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
-import CloudinaryUploader from '../../../components/CloudinaryUploader';
 import { useParams } from 'react-router-dom';
 
 const ViewIssue = () => {
@@ -45,8 +44,6 @@ const ViewIssue = () => {
   });
 
   const fetchIssue = async () => {
-    console.log('fetchUsers running');
-    console.log('id', id);
     if (!id) {
       return;
     }
