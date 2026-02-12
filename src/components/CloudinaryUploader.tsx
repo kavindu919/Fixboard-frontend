@@ -19,9 +19,9 @@ const CloudinaryUploader = ({ name, label, value, onChange }: CloudinaryUploader
   const widgetRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!window.cloudinary) return;
+    if (!(window as any).cloudinary) return;
 
-    widgetRef.current = window.cloudinary.createUploadWidget(
+    widgetRef.current = (window as any).cloudinary.createUploadWidget(
       {
         cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
         uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,

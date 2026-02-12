@@ -7,7 +7,7 @@ import { userRegistration } from '../../services/auth.services';
 import { registerSchema } from '../../utils/validation/authSchema';
 import { ZodError } from 'zod';
 import toast from 'react-hot-toast';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
