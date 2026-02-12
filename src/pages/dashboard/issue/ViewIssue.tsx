@@ -77,7 +77,7 @@ const ViewIssue = () => {
     <form className="min-h-screen w-full space-y-4 pb-24">
       <header className="flex flex-col gap-3">
         <h5 className="text-xs text-slate-500 uppercase">
-          {pathname.substring(1).split('/').join(' / ')}
+          {pathname.split('/').filter(Boolean).slice(0, -1).join(' / ')}
         </h5>
       </header>
 
