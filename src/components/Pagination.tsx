@@ -18,7 +18,7 @@ const Pagination = ({ currentPage = 1, totalPages = 5, onPageChange }: Paginatio
         <button
           key={i}
           onClick={() => onPageChange(i + 1)}
-          className={`className="ml-2 min-w-9 rounded-md border border-slate-300 px-3 py-2 text-center text-sm transition-all hover:bg-slate-700 hover:text-white hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ${currentPage === i + 1 ? 'bg-slate-800 text-white' : ''}`}
+          className={`ml-2 min-w-9 rounded-md border border-slate-300 px-3 py-2 text-center text-sm transition-all hover:bg-slate-700 hover:text-white hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ${currentPage === i + 1 ? 'bg-slate-800 text-white' : ''}`}
         >
           {i + 1}
         </button>
