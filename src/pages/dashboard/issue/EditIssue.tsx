@@ -137,7 +137,7 @@ const EditIssue = () => {
         return;
       }
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         console.log(error);
         toast.error('Unexpected error occurred');
@@ -168,7 +168,7 @@ const EditIssue = () => {
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         console.log(error);
         toast.error('Unexpected error occurred');
@@ -182,7 +182,7 @@ const EditIssue = () => {
     <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
       <header className="flex">
         <h5 className="text-xs text-slate-500 uppercase">
-          {pathname.substring(1).split('/').join(' / ')}
+          {pathname.split('/').filter(Boolean).slice(0, -1).join(' / ')}
         </h5>
       </header>
 
@@ -268,7 +268,7 @@ const EditIssue = () => {
                   )}
                   {data.closedAt && (
                     <FormInput
-                      label="ClosedAt Date"
+                      label="Closed Date"
                       name="closedAt"
                       type="date"
                       min={new Date().toISOString().split('T')[0]}

@@ -84,7 +84,7 @@ const CreateIssue = () => {
         return;
       }
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         console.log(error);
         toast.error('Unexpected error occurred');

@@ -19,7 +19,7 @@ const ProfilePopup = () => {
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         toast.error('Unexpected error occurred');
       }

@@ -18,7 +18,7 @@ export const StatusBadge = ({ status }: { status: string }) => {
           icon: <FiCircle className="h-3 w-3" />,
           label: 'Open',
         };
-      case 'in progress':
+      case 'in_progress':
         return {
           className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
           icon: <FiClock className="h-3 w-3" />,

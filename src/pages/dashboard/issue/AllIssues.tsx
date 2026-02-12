@@ -189,7 +189,7 @@ const AllIssues = () => {
                   {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
                 </td>
 
-                <td className="tabledata flex flex-row items-center justify-center gap-3">
+                <td className="tabledata flex flex-row items-center justify-start gap-3">
                   <button
                     className="cursor-pointer"
                     onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
