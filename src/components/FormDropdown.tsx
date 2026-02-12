@@ -1,4 +1,3 @@
-'use client';
 import React, { useState } from 'react';
 import { MdOutlineArrowDownward } from 'react-icons/md';
 interface Option {
@@ -22,7 +21,7 @@ const FormDropdown = ({
   const [state, setState] = useState<boolean>(false);
   return (
     <div className="flex w-full flex-col gap-2">
-      <label htmlFor={label} className="text-sm">
+      <label htmlFor={name} className="text-sm">
         {label}
       </label>
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { GrStatusGood } from 'react-icons/gr';
 import { TbPlayerStop } from 'react-icons/tb';
 
@@ -16,12 +16,10 @@ interface CloudinaryUploaderProps {
 }
 
 const CloudinaryUploader = ({ name, label, value, onChange }: CloudinaryUploaderProps) => {
-  const widgetRef = useRef<any>(null);
+  const openWidget = useCallback(() => {
+    if (!(window as any).cloudinary) return;
 
-  useEffect(() => {
-    if (!window.cloudinary) return;
-
-    widgetRef.current = window.cloudinary.createUploadWidget(
+    const widget = (window as any).cloudinary.createUploadWidget(
       {
         cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
         uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
@@ -38,16 +36,13 @@ const CloudinaryUploader = ({ name, label, value, onChange }: CloudinaryUploader
             url: result.info.secure_url,
             uploadedAt: result.info.created_at,
           };
-
           onChange([...value, attachment]);
         }
       },
     );
-  }, [value, onChange]);
 
-  const openWidget = () => {
-    widgetRef.current?.open();
-  };
+    widget.open();
+  }, [onChange, value]);
 
   const removeAttachment = (url: string) => {
     onChange(value.filter((item) => item.url !== url));

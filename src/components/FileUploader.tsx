@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { uploadToCloudinary } from '../services/cloudinary.services';
 import { GrStatusGood } from 'react-icons/gr';
 import { TbPlayerStop } from 'react-icons/tb';

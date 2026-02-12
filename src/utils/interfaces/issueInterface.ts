@@ -10,6 +10,8 @@ export interface IssueProps {
   estimatedHours: number | null;
   actualHours?: number | null;
   assignedToId?: string | null;
+  resolvedAt?: Date | null;
+  closedAt?: Date | null;
   attachments?: { name: string; url: string; uploadedAt: string }[];
 }
 
@@ -50,4 +52,43 @@ export interface PaginationProps {
   page: number;
   limit: number;
   total: number;
+}
+
+export interface IssueStatsProps {
+  open: number;
+  in_progress: number;
+  resolved: number;
+  closed: number;
+}
+interface PriorityStats {
+  low: number;
+  medium: number;
+  high: number;
+  critical: number;
+}
+
+interface SeverityStats {
+  minor: number;
+  major: number;
+  critical: number;
+}
+
+export interface ActivityItem {
+  id: string;
+  userName: string;
+  action: 'created' | 'updated' | 'commented' | 'status_changed' | 'assigned';
+  issueTitle: string;
+  issueId: string;
+  timeStamp: string;
+  comment?: string;
+}
+
+export interface DashboardExtraProps {
+  overdueCount: number;
+  unassignedCount: number;
+  priorityStats: PriorityStats;
+  severityStats: SeverityStats;
+  recentActivities: ActivityItem[];
+  estimatedHoursTotal: number;
+  actualHoursTotal: number;
 }

@@ -1,9 +1,8 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import StatCard from '../../../components/StatCard';
 import { useEffect, useState } from 'react';
 import Filters from '../../../components/Filters';
 import Pagination from '../../../components/Pagination';
-import { deleteIssue, getAllIssues } from '../../../services/issueservice';
+import { deleteIssue, exportIssue, getAllIssues } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import type {
   AllIssuePageProps,
@@ -16,6 +15,7 @@ import PopUpModalComponent from '../../../components/PopUpModalComponent';
 import { GrCircleInformation } from 'react-icons/gr';
 import { PriorityBadge, StatusBadge } from '../../../utils/helpers/issueBadge';
 import { useDebounce } from '../../../utils/hooks/useDebounsehook';
+import FormDropdown from '../../../components/FormDropdown';
 
 const AllIssues = () => {
   const { pathname } = useLocation();
@@ -47,6 +47,7 @@ const AllIssues = () => {
     limit: 20,
   });
   const [data, setData] = useState<AllIssuePageProps[]>([]);
+  const [exportType, setExportType] = useState<string>('');
 
   const debounced = useDebounce(400, query.search);
 
@@ -108,6 +109,18 @@ const AllIssues = () => {
     }
   };
 
+  const handleExport = async (exportValue: string) => {
+    try {
+      await exportIssue(exportValue);
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Unexpected error occurred');
+      }
+    }
+  };
+
   return (
     <div className="h-full w-full space-y-4 pb-24">
       <div className="flex w-full flex-row items-center justify-between">
@@ -123,14 +136,26 @@ const AllIssues = () => {
           Create Issue
         </Link>
       </div>
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Open" value="10" />
-        <StatCard label="In Progress" value="12" />
-        <StatCard label="Resolved" value="3" />
-        <StatCard label="Closed" value="1" />
-      </section>
-      <section>
+
+      <section className="flex flex-row gap-3">
         <Filters query={query} setQuery={setQuery} />
+        <div>
+          <FormDropdown
+            label="Export As"
+            name="export_as"
+            value={exportType}
+            options={[
+              { value: 'json', label: 'JSON' },
+              { value: 'csv', label: 'CSV' },
+            ]}
+            onChange={(e) => {
+              const value = e.target.value;
+              setExportType(value);
+              handleExport(value);
+            }}
+            placeholder="Select an Option"
+          />
+        </div>
       </section>
       <section>
         <table className="tableoutline">
@@ -146,51 +171,67 @@ const AllIssues = () => {
             </tr>
           </thead>
           <tbody className="tablebody">
-            {data.map((data, key) => (
-              <tr key={key}>
-                <td className="tabledata">{data.title ?? '-'}</td>
-                <td className="tabledata">
-                  <StatusBadge status={data.status} />
-                </td>
-                <td className="tabledata">
-                  {' '}
-                  <PriorityBadge priority={data.priority} />{' '}
-                </td>
-                <td className="tabledata">{data.assignedToName ?? '-'}</td>
-                <td className="tabledata">
-                  {data.dueDate ? new Date(data.dueDate).toLocaleDateString() : '-'}
-                </td>
-                <td className="tabledata">
-                  {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
-                </td>
-
-                <td className="tabledata flex flex-row items-center justify-center gap-3">
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
-                  >
-                    <GrCircleInformation />
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/issues/edit/${data.id}`)}
-                  >
-                    <FiEdit2 />
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() =>
-                      setIsDeletePopupOpen({
-                        id: data.id,
-                        isOpen: true,
-                      })
-                    }
-                  >
-                    <MdDeleteOutline />
-                  </button>
+            {loading ? (
+              [...Array(5)].map((_, index) => (
+                <tr key={index}>
+                  <td colSpan={7} className="p-4">
+                    <div className="h-6 w-full animate-pulse rounded bg-slate-200"></div>
+                  </td>
+                </tr>
+              ))
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-6 text-center text-sm text-slate-500">
+                  No issues found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              data.map((data, key) => (
+                <tr key={key}>
+                  <td className="tabledata">{data.title ?? '-'}</td>
+                  <td className="tabledata">
+                    <StatusBadge status={data.status} />
+                  </td>
+                  <td className="tabledata">
+                    {' '}
+                    <PriorityBadge priority={data.priority} />{' '}
+                  </td>
+                  <td className="tabledata">{data.assignedToName ?? '-'}</td>
+                  <td className="tabledata">
+                    {data.dueDate ? new Date(data.dueDate).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="tabledata">
+                    {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
+                  </td>
+
+                  <td className="tabledata flex flex-row items-center justify-start gap-3">
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
+                    >
+                      <GrCircleInformation />
+                    </button>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/dashboard/issues/edit/${data.id}`)}
+                    >
+                      <FiEdit2 />
+                    </button>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() =>
+                        setIsDeletePopupOpen({
+                          id: data.id,
+                          isOpen: true,
+                        })
+                      }
+                    >
+                      <MdDeleteOutline />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </section>

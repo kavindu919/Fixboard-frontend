@@ -56,3 +56,46 @@ export const deleteIssue = async (id: string) => {
     throw error;
   }
 };
+
+export const getIssueStats = async () => {
+  try {
+    const res = await axiosInstance.get('/issues/issues-count');
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateIssueStatus = async (id: string, status: string) => {
+  try {
+    const res = await axiosInstance.post('/issues/update-issuess-status', {
+      id,
+      status,
+    });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const exportIssue = async (format: string) => {
+  try {
+    const res = await axiosInstance.get(`/issues/issues-export?format=${format}`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], {
+      type: format === 'csv' ? 'text/csv' : 'application/json',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `issues.${format}`;
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    throw error;
+  }
+};

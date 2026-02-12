@@ -9,7 +9,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const FormInput = ({ placeholder, name, label, type, ...rest }: FormInputProps) => {
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2">
-      <label htmlFor={label} className="text-sm">
+      <label htmlFor={name} className="text-sm">
         {label}
       </label>
       <input

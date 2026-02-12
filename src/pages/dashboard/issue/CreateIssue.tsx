@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { IssuePageUserProps, IssueProps } from '../../../utils/interfaces/issueInterface';
 import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
@@ -16,6 +16,7 @@ const CreateIssue = () => {
   const { pathname } = useLocation();
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -39,7 +40,6 @@ const CreateIssue = () => {
     tags: [],
     dueDate: null,
     estimatedHours: null,
-    actualHours: null,
     assignedToId: null,
     attachments: [],
   });
@@ -70,10 +70,11 @@ const CreateIssue = () => {
           tags: [],
           dueDate: null,
           estimatedHours: null,
-          actualHours: null,
+
           assignedToId: null,
           attachments: [],
         });
+        navigate('/dashboard');
       } else {
         toast.error(res.data.message);
       }
@@ -84,7 +85,7 @@ const CreateIssue = () => {
         return;
       }
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         console.log(error);
         toast.error('Unexpected error occurred');
@@ -95,7 +96,7 @@ const CreateIssue = () => {
   };
 
   return (
-    <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
+    <form className="min-h-screen w-full space-y-3 pb-24" onSubmit={handleSubmit}>
       <header className="flex flex-col gap-3">
         <h5 className="text-xs text-slate-500 uppercase">
           {pathname.substring(1).split('/').join(' / ')}
@@ -302,22 +303,6 @@ const CreateIssue = () => {
                 });
               }}
               value={data.estimatedHours !== null ? data.estimatedHours : ''}
-              disabled={loading}
-            />
-            <FormInput
-              label="Actual Hours"
-              name="actualHours"
-              type="number"
-              min={0}
-              placeholder="e.g. 10"
-              onChange={(e) => {
-                const value = e.target.value;
-                setData({
-                  ...data,
-                  actualHours: value === '' ? null : Number(value),
-                });
-              }}
-              value={data.actualHours !== null ? data.actualHours : ''}
               disabled={loading}
             />
           </section>

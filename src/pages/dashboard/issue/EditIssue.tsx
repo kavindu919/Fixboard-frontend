@@ -5,18 +5,31 @@ import FormInput from '../../../components/FormInput';
 import FormDropdown from '../../../components/FormDropdown';
 import TextArea from '../../../components/TextArea';
 import TagInput from '../../../components/TagInput';
-import { getAllUsers, getIssueById, updateIssue } from '../../../services/issueservice';
+import {
+  getAllUsers,
+  getIssueById,
+  updateIssue,
+  updateIssueStatus,
+} from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import FormButton from '../../../components/FormButton';
-import { issueSchema } from '../../../utils/validation/issueSchema';
+import { issueUpdatePageSchema } from '../../../utils/validation/issueSchema';
 import { ZodError } from 'zod';
 import CloudinaryUploader from '../../../components/CloudinaryUploader';
 import { useParams } from 'react-router-dom';
+import { FiCheck, FiLock } from 'react-icons/fi';
+import PopUpModalComponent from '../../../components/PopUpModalComponent';
 
 const EditIssue = () => {
   const { pathname } = useLocation();
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
+  const [isPopupOpen, setIsPopupOpen] = useState<{ id: string; status: string; isOpen: boolean }>({
+    id: '',
+    status: '',
+    isOpen: false,
+  });
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -43,6 +56,8 @@ const EditIssue = () => {
     severity: 'minor',
     tags: [],
     dueDate: null,
+    resolvedAt: null,
+    closedAt: null,
     estimatedHours: null,
     actualHours: null,
     assignedToId: null,
@@ -50,9 +65,8 @@ const EditIssue = () => {
   });
 
   const fetchIssue = async () => {
-    console.log('fetchUsers running');
-    console.log('id', id);
     if (!id) {
+      toast.error(' Unexpected error occurred');
       return;
     }
     try {
@@ -68,6 +82,8 @@ const EditIssue = () => {
           severity: issue.severity,
           tags: issue.tags || [],
           dueDate: issue.dueDate ? new Date(issue.dueDate) : null,
+          closedAt: issue.closedAt ? new Date(issue.closedAt) : null,
+          resolvedAt: issue.resolvedAt ? new Date(issue.resolvedAt) : null,
           estimatedHours: issue.estimatedHours,
           actualHours: issue.actualHours,
           assignedToId: issue.assignedToId,
@@ -93,7 +109,7 @@ const EditIssue = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const validData = issueSchema.parse(data);
+      const validData = issueUpdatePageSchema.parse(data);
       const res = await updateIssue(validData);
       if (res.data.success) {
         toast.success(res.data.message);
@@ -110,7 +126,7 @@ const EditIssue = () => {
           assignedToId: null,
           attachments: [],
         });
-        navigate('/issues');
+        navigate('/dashboard/issues');
       } else {
         toast.error(res.data.message);
       }
@@ -121,7 +137,7 @@ const EditIssue = () => {
         return;
       }
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message || 'Login failed');
+        toast.error(error.response.data.message || 'Unexpected error occurred');
       } else {
         console.log(error);
         toast.error('Unexpected error occurred');
@@ -130,12 +146,43 @@ const EditIssue = () => {
       setLoading(false);
     }
   };
-  console.log('data', data);
+
+  const handleIssueState = async (id: string, status: string) => {
+    try {
+      setLoading(true);
+      if (!id) {
+        toast.error(' Unexpected error occurred');
+        return;
+      }
+      const res = await updateIssueStatus(id, status);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setIsPopupOpen({
+          id: '',
+          status: '',
+          isOpen: false,
+        });
+        fetchIssue();
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message || 'Unexpected error occurred');
+      } else {
+        console.log(error);
+        toast.error('Unexpected error occurred');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
-      <header className="flex flex-col gap-3">
+    <form className="min-h-screen w-full space-y-3 pb-24" onSubmit={handleSubmit}>
+      <header className="flex">
         <h5 className="text-xs text-slate-500 uppercase">
-          {pathname.substring(1).split('/').join(' / ')}
+          {pathname.split('/').filter(Boolean).slice(0, -1).join(' / ')}
         </h5>
       </header>
 
@@ -181,31 +228,78 @@ const EditIssue = () => {
             </h5>
           </header>
           <section className="grid w-full grid-cols-1 gap-3 md:grid-cols-1">
-            <FormDropdown
-              label="Status"
-              name="status"
-              options={[
-                {
-                  value: 'open',
-                  label: 'Open',
-                },
-                {
-                  value: 'in_progress',
-                  label: 'In Progress',
-                },
-                {
-                  value: 'resolved',
-                  label: 'Resolved',
-                },
-                {
-                  value: 'closed',
-                  label: 'Closed',
-                },
-              ]}
-              value={data.status}
-              onChange={handleChnage}
-              disabled={loading}
-            />
+            <section className="flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                {data.status !== 'resolved' && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsPopupOpen({ id: data.id!, status: 'resolved', isOpen: true })
+                    }
+                    className="bg-primary text-secondary flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium"
+                  >
+                    <FiCheck className="h-4 w-4" />
+                    Mark as Resolved
+                  </button>
+                )}
+                {data.status !== 'closed' && (
+                  <button
+                    type="button"
+                    onClick={() => setIsPopupOpen({ id: data.id!, status: 'closed', isOpen: true })}
+                    className="bg-primary text-secondary flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium"
+                  >
+                    <FiLock className="h-4 w-4" />
+                    Mark as Closed
+                  </button>
+                )}
+              </div>
+              {(data.resolvedAt || data.closedAt) && (
+                <div className="flex w-full flex-col items-center justify-center">
+                  {data.resolvedAt && (
+                    <FormInput
+                      label="Resolved Date"
+                      name="resolvedAt"
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      placeholder=""
+                      value={data.resolvedAt ? data.resolvedAt.toISOString().split('T')[0] : ''}
+                      disabled={true}
+                    />
+                  )}
+                  {data.closedAt && (
+                    <FormInput
+                      label="Closed Date"
+                      name="closedAt"
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      placeholder=""
+                      value={data.closedAt ? data.closedAt.toISOString().split('T')[0] : ''}
+                      disabled={true}
+                    />
+                  )}
+                </div>
+              )}
+            </section>
+            {data.status !== 'resolved' && data.status !== 'closed' && (
+              <FormDropdown
+                label="Status"
+                name="status"
+                options={[
+                  {
+                    value: 'open',
+                    label: 'Open',
+                  },
+                  {
+                    value: 'in_progress',
+                    label: 'In Progress',
+                  },
+                ]}
+                value={data.status}
+                onChange={handleChnage}
+                disabled={loading}
+              />
+            )}
+
             <section className="flex flex-row items-center justify-between gap-1.5">
               <FormDropdown
                 label="Priority"
@@ -364,6 +458,24 @@ const EditIssue = () => {
       <div className="flex w-full flex-row items-center justify-end px-1.5">
         <FormButton text="Save" type="submit" isLoading={loading} disabled={loading} />
       </div>
+      {isPopupOpen.status && (
+        <PopUpModalComponent
+          isOpen={loading}
+          title="Change Issue Status"
+          onClose={() =>
+            setIsPopupOpen({
+              id: '',
+              status: '',
+              isOpen: false,
+            })
+          }
+          onConfirm={() => handleIssueState(isPopupOpen.id, isPopupOpen.status)}
+          confirmText={loading ? 'Updating...' : 'Update'}
+          cancelText="Cancel"
+        >
+          <span>Are you sure you want to change status of this issue?</span>
+        </PopUpModalComponent>
+      )}
     </form>
   );
 };
