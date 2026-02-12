@@ -96,7 +96,7 @@ const CreateIssue = () => {
   };
 
   return (
-    <form className="min-h-screen w-full space-y-4 pb-24" onSubmit={handleSubmit}>
+    <form className="min-h-screen w-full space-y-3 pb-24" onSubmit={handleSubmit}>
       <header className="flex flex-col gap-3">
         <h5 className="text-xs text-slate-500 uppercase">
           {pathname.substring(1).split('/').join(' / ')}
