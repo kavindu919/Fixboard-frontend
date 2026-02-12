@@ -4,6 +4,7 @@ import AuthGuard from './routes/AuthGuard';
 import { lazy, Suspense } from 'react';
 import Loader from './components/Loader';
 import NotFoundPage from './pages/NotFoundPage';
+import ComingSoon from './components/ComingSoon';
 
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
@@ -31,6 +32,7 @@ function App() {
               <Route path="issues/view/:id" element={<ViewIssue />} />
             </Route>
           </Route>
+          <Route path="/comming-soon" element={<ComingSoon />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
