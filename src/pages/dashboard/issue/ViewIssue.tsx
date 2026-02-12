@@ -8,6 +8,7 @@ import TagInput from '../../../components/TagInput';
 import { getAllUsers, getIssueById } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
+import CloudinaryUploader from '../../../components/CloudinaryUploader';
 
 const ViewIssue = () => {
   const { pathname } = useLocation();
@@ -225,19 +226,18 @@ const ViewIssue = () => {
                 Upload files related to this issue
               </h5>
             </header>
-            <section className="w-full">
-              {/* <CloudinaryUploader
+            <section className="pointer-events-none w-full">
+              <CloudinaryUploader
                 name="attachments"
                 label="Attachments"
                 value={data.attachments || []}
-                dis
                 onChange={(urls) => {
                   setData({
                     ...data,
                     attachments: urls,
                   });
                 }}
-              /> */}
+              />
             </section>
           </div>
         </div>

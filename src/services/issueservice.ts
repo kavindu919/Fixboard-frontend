@@ -61,7 +61,9 @@ export const getIssueStats = async () => {
   try {
     const res = await axiosInstance.get('/issues/issues-count');
     return res;
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const updateIssueStatus = async (id: string, status: string) => {

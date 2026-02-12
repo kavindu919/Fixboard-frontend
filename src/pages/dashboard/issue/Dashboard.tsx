@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FiActivity, FiBarChart2, FiClock, FiList, FiTrendingUp, FiUser } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import { FiActivity, FiBarChart2, FiClock, FiTrendingUp, FiUser } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import StatCard from '../../../components/StatCard';
 import type {

@@ -26,7 +26,7 @@ const PopUpModalComponent = ({
           <button
             type="button"
             onClick={onClose}
-            disabled={isOpen}
+            disabled={false}
             className="text-secondary h-10 w-32 cursor-pointer rounded border border-slate-300 bg-white text-sm font-bold shadow-md focus:drop-shadow-xl"
           >
             {cancelText}

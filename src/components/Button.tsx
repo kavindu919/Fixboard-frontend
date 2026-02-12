@@ -1,23 +1,17 @@
-import React from "react";
+import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
-  type: "submit" | "reset" | "button";
+  type: 'submit' | 'reset' | 'button';
   isLoading: boolean;
   disabled: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  text,
-  type,
-  isLoading,
-  disabled,
-  ...rest
-}) => {
+export const Button: React.FC<ButtonProps> = ({ text, type, isLoading, disabled, ...rest }) => {
   return (
     <button
       type={type}
-      className="w-full rounded bg-theme p-3 text-base font-bold shadow-md focus:drop-shadow-xl bg-black cursor-pointer"
+      className="w-full cursor-pointer rounded bg-black p-3 text-base font-bold shadow-md focus:drop-shadow-xl"
       {...rest}
       disabled={disabled || isLoading}
     >
