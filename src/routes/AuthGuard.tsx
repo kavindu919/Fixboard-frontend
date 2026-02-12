@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import { Navigate, Outlet } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 const AuthGuard = () => {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
@@ -20,7 +21,7 @@ const AuthGuard = () => {
     }
   };
   if (isAuth === null) {
-    return <div>Checking authentication...</div>;
+    return <Loader />;
   }
   return isAuth ? <Outlet /> : <Navigate to="/login" replace />;
 };
