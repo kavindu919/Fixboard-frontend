@@ -10,8 +10,8 @@ export interface IssueProps {
   estimatedHours: number | null;
   actualHours?: number | null;
   assignedToId?: string | null;
-  resolvedAt?: Date;
-  closedAt?: Date;
+  resolvedAt?: Date | null;
+  closedAt?: Date | null;
   attachments?: { name: string; url: string; uploadedAt: string }[];
 }
 
