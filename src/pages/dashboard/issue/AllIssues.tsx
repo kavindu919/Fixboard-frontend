@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import StatCard from '../../../components/StatCard';
 import { useEffect, useState } from 'react';
 import Filters from '../../../components/Filters';
 import Pagination from '../../../components/Pagination';
@@ -123,12 +122,7 @@ const AllIssues = () => {
           Create Issue
         </Link>
       </div>
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Open" value="10" />
-        <StatCard label="In Progress" value="12" />
-        <StatCard label="Resolved" value="3" />
-        <StatCard label="Closed" value="1" />
-      </section>
+
       <section>
         <Filters query={query} setQuery={setQuery} />
       </section>
@@ -173,7 +167,7 @@ const AllIssues = () => {
                   </button>
                   <button
                     className="cursor-pointer"
-                    onClick={() => navigate(`/issues/edit/${data.id}`)}
+                    onClick={() => navigate(`/dashboard/issues/edit/${data.id}`)}
                   >
                     <FiEdit2 />
                   </button>
