@@ -9,6 +9,8 @@ import PasswordField from '../../components/PasswordField';
 import InputFeild from '../../components/InputField';
 import Button from '../../components/Button';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/slices/authSlice';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -17,6 +19,7 @@ const LoginPage = () => {
     password: '',
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -32,6 +35,13 @@ const LoginPage = () => {
       const res = await userLogin(validData);
       if (res.data.success) {
         toast.success(res.data.message);
+        dispatch(
+          login({
+            id: res.data.user.id,
+            name: res.data.user.name,
+            email: res.data.user.email,
+          }),
+        );
         setData({
           email: '',
           password: '',

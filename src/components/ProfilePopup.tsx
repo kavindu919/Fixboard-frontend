@@ -1,14 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { userLogout } from '../services/auth.services';
 import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
 
 const ProfilePopup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
       const res = await userLogout();
       if (res.data.success) {
         toast.success(res.data.message);
+        dispatch(logout());
         navigate('/login');
       } else {
         toast.error(res.data.message);
