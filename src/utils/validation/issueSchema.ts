@@ -1,11 +1,17 @@
 import * as z from 'zod';
 export const issueSchema = z.object({
-  title: z.string({
-    message: 'Title is required',
-  }),
-  description: z.string({
-    message: 'Description is required',
-  }),
+  title: z
+    .string({
+      message: 'Title is required',
+    })
+    .min(1, 'Title is required')
+    .trim(),
+  description: z
+    .string({
+      message: 'Description is required',
+    })
+    .min(1, 'Description is required')
+    .trim(),
   status: z.enum(['open', 'in_progress', 'resolved', 'closed'], {
     message: 'Please select the issue status',
   }),
@@ -13,7 +19,7 @@ export const issueSchema = z.object({
     message: 'Please select a priority level',
   }),
   severity: z.enum(['minor', 'major', 'critical'], { message: 'Please select the issue severity' }),
-  assignedToId: z.string().optional(),
+  assignedToId: z.string({ message: 'Please select the person who need to assign' }).optional(),
   tags: z.array(z.string()).optional(),
   dueDate: z.preprocess(
     (val) => {
@@ -43,12 +49,18 @@ export const issueSchema = z.object({
     .optional(),
 });
 export const issueUpdatePageSchema = z.object({
-  id: z.string({
-    message: 'Issue Id is required',
-  }),
-  title: z.string({
-    message: 'Title is required',
-  }),
+  id: z
+    .string({
+      message: 'Issue Id is required',
+    })
+    .min(1, 'Title is required')
+    .trim(),
+  title: z
+    .string({
+      message: 'Title is required',
+    })
+    .min(1, 'Title is required')
+    .trim(),
   description: z.string({
     message: 'Description is required',
   }),
