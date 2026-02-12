@@ -171,51 +171,67 @@ const AllIssues = () => {
             </tr>
           </thead>
           <tbody className="tablebody">
-            {data.map((data, key) => (
-              <tr key={key}>
-                <td className="tabledata">{data.title ?? '-'}</td>
-                <td className="tabledata">
-                  <StatusBadge status={data.status} />
-                </td>
-                <td className="tabledata">
-                  {' '}
-                  <PriorityBadge priority={data.priority} />{' '}
-                </td>
-                <td className="tabledata">{data.assignedToName ?? '-'}</td>
-                <td className="tabledata">
-                  {data.dueDate ? new Date(data.dueDate).toLocaleDateString() : '-'}
-                </td>
-                <td className="tabledata">
-                  {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
-                </td>
-
-                <td className="tabledata flex flex-row items-center justify-start gap-3">
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
-                  >
-                    <GrCircleInformation />
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/dashboard/issues/edit/${data.id}`)}
-                  >
-                    <FiEdit2 />
-                  </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() =>
-                      setIsDeletePopupOpen({
-                        id: data.id,
-                        isOpen: true,
-                      })
-                    }
-                  >
-                    <MdDeleteOutline />
-                  </button>
+            {loading ? (
+              [...Array(5)].map((_, index) => (
+                <tr key={index}>
+                  <td colSpan={7} className="p-4">
+                    <div className="h-6 w-full animate-pulse rounded bg-slate-200"></div>
+                  </td>
+                </tr>
+              ))
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-6 text-center text-sm text-slate-500">
+                  No issues found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              data.map((data, key) => (
+                <tr key={key}>
+                  <td className="tabledata">{data.title ?? '-'}</td>
+                  <td className="tabledata">
+                    <StatusBadge status={data.status} />
+                  </td>
+                  <td className="tabledata">
+                    {' '}
+                    <PriorityBadge priority={data.priority} />{' '}
+                  </td>
+                  <td className="tabledata">{data.assignedToName ?? '-'}</td>
+                  <td className="tabledata">
+                    {data.dueDate ? new Date(data.dueDate).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="tabledata">
+                    {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '-'}
+                  </td>
+
+                  <td className="tabledata flex flex-row items-center justify-start gap-3">
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/dashboard/issues/view/${data.id}`)}
+                    >
+                      <GrCircleInformation />
+                    </button>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/dashboard/issues/edit/${data.id}`)}
+                    >
+                      <FiEdit2 />
+                    </button>
+                    <button
+                      className="cursor-pointer"
+                      onClick={() =>
+                        setIsDeletePopupOpen({
+                          id: data.id,
+                          isOpen: true,
+                        })
+                      }
+                    >
+                      <MdDeleteOutline />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </section>
