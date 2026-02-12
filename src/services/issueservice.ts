@@ -59,7 +59,7 @@ export const deleteIssue = async (id: string) => {
 
 export const getIssueStats = async () => {
   try {
-    const res = await axiosInstance.post('/issues/getissue-status');
+    const res = await axiosInstance.get('/issues/issues-count');
     return res;
   } catch (error) {}
 };

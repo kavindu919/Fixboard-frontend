@@ -60,3 +60,35 @@ export interface IssueStatsProps {
   resolved: number;
   closed: number;
 }
+interface PriorityStats {
+  low: number;
+  medium: number;
+  high: number;
+  critical: number;
+}
+
+interface SeverityStats {
+  minor: number;
+  major: number;
+  critical: number;
+}
+
+export interface ActivityItem {
+  id: string;
+  userName: string;
+  action: 'created' | 'updated' | 'commented' | 'status_changed' | 'assigned';
+  issueTitle: string;
+  issueId: string;
+  timeStamp: string;
+  comment?: string;
+}
+
+export interface DashboardExtraProps {
+  overdueCount: number;
+  unassignedCount: number;
+  priorityStats: PriorityStats;
+  severityStats: SeverityStats;
+  recentActivities: ActivityItem[];
+  estimatedHoursTotal: number;
+  actualHoursTotal: number;
+}
