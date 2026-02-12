@@ -43,7 +43,7 @@ const CloudinaryUploader = ({ name, label, value, onChange }: CloudinaryUploader
         }
       },
     );
-  }, [value, onChange]);
+  }, []);
 
   const openWidget = () => {
     widgetRef.current?.open();
