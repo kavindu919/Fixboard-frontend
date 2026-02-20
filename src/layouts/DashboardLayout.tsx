@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import { useState } from 'react';
 
 const DashboardLayout = () => {
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
   return (
     <div className="flex h-screen w-full">
       <aside className="md:block md:w-16 lg:w-64">
