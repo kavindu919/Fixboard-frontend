@@ -37,9 +37,9 @@ const LoginPage = () => {
         toast.success(res.data.message);
         dispatch(
           login({
-            id: res.data.user.id,
-            name: res.data.user.name,
-            email: res.data.user.email,
+            id: res.data.id,
+            name: res.data.name,
+            email: res.data.email,
           }),
         );
         setData({
