@@ -99,3 +99,14 @@ export const exportIssue = async (format: string) => {
     throw error;
   }
 };
+
+export const getMyIssues = async (query: QueryProps) => {
+  try {
+    const res = await axiosInstance.get('/issues/get-myissues', {
+      params: query,
+    });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

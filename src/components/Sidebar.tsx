@@ -22,7 +22,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: SideBarProps) => {
     {
       label: 'My Issues',
       icon: LuListTodo,
-      path: '/comming-soon',
+      path: '/dashboard/myissues',
     },
     {
       label: 'Reported by Me',
