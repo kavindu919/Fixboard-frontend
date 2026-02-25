@@ -9,10 +9,14 @@ import { getAllUsers, getIssueById } from '../../../services/issueservice';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import CloudinaryUploader from '../../../components/CloudinaryUploader';
+import CommentBox from '../../../components/CommentBox';
+import { getAllComments } from '../../../services/commentservices';
+import type { CommentProps } from '../../../utils/interfaces/commentInterface';
 
 const ViewIssue = () => {
   const { pathname } = useLocation();
   const [users, setUsers] = useState<IssuePageUserProps[]>([]);
+  const [comments, setComments] = useState<CommentProps[]>([]);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -20,14 +24,19 @@ const ViewIssue = () => {
       try {
         const res = await getAllUsers();
         setUsers(res.data.data);
-      } catch (error) {
-        console.error('Failed to fetch users', error);
+      } catch (error: any) {
+        if (error.response && error.response.data) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Unexpected error occurred');
+        }
       }
     };
 
     fetchUsers();
     fetchIssue();
-  }, []);
+    fetchComments();
+  }, [id]);
 
   const [data, setData] = useState<IssueProps>({
     id: '',
@@ -67,9 +76,30 @@ const ViewIssue = () => {
           attachments: issue.attachments || [],
         });
       }
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to load issue details');
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Unexpected error occurred');
+      }
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      if (!id) {
+        return;
+      }
+      const res = await getAllComments(id);
+      if (res.data.success) {
+        setComments(res.data?.data);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Unexpected error occurred');
+      }
     }
   };
 
@@ -294,6 +324,47 @@ const ViewIssue = () => {
               value={data.actualHours !== null ? data.actualHours : ''}
               disabled={true}
             />
+          </section>
+        </div>
+      </div>
+      <div className="flex w-full flex-1 flex-col gap-3 md:flex-row">
+        <div className="flex w-full flex-col gap-3 md:w-3/4">
+          <div className="flex h-full w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4">
+            <header className="flex flex-col items-start justify-start gap-1">
+              <h4 className="text-base font-medium">Comments</h4>
+              <h5 className="text-sm font-normal text-slate-400">
+                Discuss with your team about this issue
+              </h5>
+            </header>
+            <section className="w-full">
+              <CommentBox issueId={data.id!} fetchComments={fetchComments} />
+            </section>
+          </div>
+        </div>
+        <div className="flex w-full flex-col gap-3 rounded-lg border-2 border-slate-300 px-3 py-4 md:w-1/4">
+          <header className="flex flex-col items-start justify-start gap-1">
+            <h4 className="text-base font-medium">Recent Comments</h4>
+            <h5 className="text-sm font-normal text-slate-400">
+              Latest updates and discussions on this issue
+            </h5>
+          </header>
+          <section className="grid w-full grid-cols-1 gap-3">
+            <div className="hide-scrollbar max-h-70 overflow-y-auto">
+              <ul className="w-full divide-y divide-slate-50">
+                {comments.map((item, key) => (
+                  <li key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-700 to-slate-500 text-xs font-bold text-white">
+                      {item.created.slice(0, 1)}
+                    </div>
+
+                    <div className="flex min-w-0 flex-1 flex-col text-sm">
+                      <span className="text-xs font-semibold text-slate-400">{item.created}</span>
+                      {item.text}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </section>
         </div>
       </div>
