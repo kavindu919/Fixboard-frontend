@@ -386,7 +386,7 @@ const Dashboard = () => {
             {extras.recentActivities.map((act) => (
               <li key={act.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-700 to-slate-500 text-xs font-bold text-white">
-                  {act.userName}
+                  {act.userName.slice(0, 1)}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs text-slate-600">
