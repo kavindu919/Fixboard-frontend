@@ -1,4 +1,5 @@
-import { LuActivity, LuFilePlus, LuLayers, LuListTodo } from 'react-icons/lu';
+import { AiOutlineTeam } from 'react-icons/ai';
+import { LuActivity, LuLayers, LuListTodo } from 'react-icons/lu';
 import { VscDashboard } from 'react-icons/vsc';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -25,11 +26,10 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: SideBarProps) => {
       path: '/dashboard/myissues',
     },
     {
-      label: 'Reported by Me',
-      icon: LuFilePlus,
-      path: '/comming-soon',
+      label: 'Manage Team',
+      icon: AiOutlineTeam,
+      path: '/dashboard/team',
     },
-
     {
       label: 'Activity Feed',
       icon: LuActivity,

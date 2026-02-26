@@ -9,6 +9,8 @@ import {
   FiAlertTriangle,
 } from 'react-icons/fi';
 import type { ActivityItem } from '../interfaces/issueInterface';
+import { GrUserAdmin } from 'react-icons/gr';
+import { LuUser } from 'react-icons/lu';
 
 export const StatusBadge = ({ status }: { status: string }) => {
   const getStatusStyle = () => {
@@ -140,3 +142,14 @@ export function timeFormatter(dateStr: string): string {
   if (hrs < 24) return `${hrs}h ago`;
   return `${Math.floor(hrs / 24)}d ago`;
 }
+
+export const RoleBadge = (role: string) => {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${role === 'user' ? 'border-blue-200 bg-blue-100 text-blue-800' : 'border-green-200 bg-green-100 text-green-800'}`}
+    >
+      {role === 'user' ? <LuUser /> : <GrUserAdmin />}
+      {role === 'user' ? 'User' : 'Admin'}
+    </span>
+  );
+};

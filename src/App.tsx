@@ -5,6 +5,7 @@ import { lazy, Suspense } from 'react';
 import Loader from './components/Loader';
 import NotFoundPage from './pages/NotFoundPage';
 import ComingSoon from './components/ComingSoon';
+import ManageTeam from './pages/dashboard/team/ManageTeam';
 
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
@@ -32,6 +33,7 @@ function App() {
               <Route path="issues/edit/:id" element={<EditIssue />} />
               <Route path="issues/view/:id" element={<ViewIssue />} />
               <Route path="myissues" element={<MyIssues />} />
+              <Route path="team" element={<ManageTeam />} />
             </Route>
           </Route>
           <Route path="/comming-soon" element={<ComingSoon />} />
